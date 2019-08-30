@@ -1,5 +1,4 @@
 ﻿using BooksOneInc.Domain.Interfaces;
-using BooksOneInc.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,18 +7,18 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BooksOneInc.Service
+namespace BooksOneInc.Service.Abstractions
 {
-	public class InMemoryRepository<T> : IRepository<T> where T : class, IEntity
+	public abstract class InMemoryRepository<T> : IRepository<T> where T : class, IEntity
 	{
-		private readonly List<T> _context;
+		protected List<T> _context;
 
 		public InMemoryRepository()
 		{
 			_context = new List<T>();
 		}
 
-		public IQueryable<T> GetAll(Expression<Func<T, bool>> whereExpr)
+		public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> whereExpr = null)
 		{
 			var query = _context.AsQueryable();
 			if (whereExpr != null)
@@ -29,12 +28,10 @@ namespace BooksOneInc.Service
 			return query;
 		}
 
-		public Task<T> GetAsync(Expression<Func<T, bool>> whereExpr, CancellationToken cancellationToken)
+		public virtual Task<T> GetAsync(Expression<Func<T, bool>> whereExpr, CancellationToken cancellationToken)
 		{
 			if (whereExpr == null)
-			{
 				throw new ArgumentNullException(nameof(whereExpr));
-			}
 
 			var query = _context.AsQueryable();
 			if (whereExpr != null)
@@ -44,7 +41,7 @@ namespace BooksOneInc.Service
 			return query.SingleOrDefaultAsync();
 		}
 
-		public Task<T> GetByIdAsync(int id, CancellationToken cancellationToken)
+		public virtual Task<T> GetByIdAsync(int id, CancellationToken cancellationToken)
 		{
 			return _context.AsQueryable().SingleOrDefaultAsync(x => x.Id == id);
 		}
