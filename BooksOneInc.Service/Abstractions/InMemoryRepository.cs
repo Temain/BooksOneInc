@@ -11,11 +11,11 @@ namespace BooksOneInc.Service.Abstractions
 {
 	public abstract class InMemoryRepository<T> : IRepository<T> where T : class, IEntity
 	{
-		protected List<T> _context;
+		protected AsyncEnumerable<T> _context;
 
 		public InMemoryRepository()
 		{
-			_context = new List<T>();
+			_context = new AsyncEnumerable<T>(new List<T>());
 		}
 
 		public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> whereExpr = null)
@@ -38,12 +38,12 @@ namespace BooksOneInc.Service.Abstractions
 			{
 				query = query.Where(whereExpr);
 			}
-			return query.SingleOrDefaultAsync();
+			return query.SingleOrDefaultAsync(cancellationToken);
 		}
 
 		public virtual Task<T> GetByIdAsync(int id, CancellationToken cancellationToken)
 		{
-			return _context.AsQueryable().SingleOrDefaultAsync(x => x.Id == id);
+			return _context.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
 		}
 	}
 }

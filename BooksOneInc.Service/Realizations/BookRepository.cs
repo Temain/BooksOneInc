@@ -8,7 +8,7 @@ namespace BooksOneInc.Service.Realizations
 	{
 		public BookRepository()
 		{
-			_context = new List<Book>
+			var books = new List<Book>
 			{
 				new Book {
 					Id = 1,
@@ -21,7 +21,21 @@ namespace BooksOneInc.Service.Realizations
 						new Author { Id = 1, Name = "Роберт", Surname = "Мартин" }
 					}
 				},
+				new Book {
+					Id = 2,
+					Title = "Паттерны проектирования",
+					NumberOfPages = 645,
+					Publisher = "Питер",
+					Year = 2017,
+					Authors = new List<Author>
+					{
+						new Author { Id = 2, Name = "Эрик", Surname = "Фримен" },
+						new Author { Id = 3, Name = "Элизабет", Surname = "Фримен" }
+					}
+				}
 			};
+
+			_context = new AsyncEnumerable<Book>(books);
 		}
 	}
 }

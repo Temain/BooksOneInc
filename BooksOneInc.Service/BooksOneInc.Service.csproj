@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\AsyncEnumerable.cs" />
     <Compile Include="Realizations\BookRepository.cs" />
     <Compile Include="Realizations\BookService.cs" />
     <Compile Include="Abstractions\IBookService.cs" />

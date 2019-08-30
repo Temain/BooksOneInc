@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using BooksOneInc.Web.App_Start;
+using Ninject;
+using Ninject.Web.Mvc;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -9,7 +8,7 @@ using System.Web.Routing;
 
 namespace BooksOneInc.Web
 {
-    public class MvcApplication : System.Web.HttpApplication
+	public class MvcApplication : System.Web.HttpApplication
     {
         protected void Application_Start()
         {
@@ -18,6 +17,10 @@ namespace BooksOneInc.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-        }
+
+			var registrations = new NinjectRegistrations();
+			var kernel = new StandardKernel(registrations);
+			DependencyResolver.SetResolver(new NinjectDependencyResolver(kernel));
+		}
     }
 }
