@@ -3,7 +3,7 @@ using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace BooksOneInc.Service.Abstractions.Common
+namespace BooksOneInc.DAL.Common
 {
 	public class AsyncEnumerable<T> : EnumerableQuery<T>, IDbAsyncEnumerable<T>, IQueryable<T>
 	{

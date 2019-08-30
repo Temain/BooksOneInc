@@ -4,9 +4,9 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using BooksOneInc.Domain.Models;
-using BooksOneInc.Service.Abstractions.Services.Models;
+using BooksOneInc.Services.Models;
 
-namespace BooksOneInc.Service.Abstractions.Services
+namespace BooksOneInc.Services.Interfaces
 {
 	public interface IBookService
 	{

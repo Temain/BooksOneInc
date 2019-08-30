@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные со сборкой.
-[assembly: AssemblyTitle("BooksOneInc.Service")]
+[assembly: AssemblyTitle("BooksOneInc.DAL")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("BooksOneInc.Service")]
+[assembly: AssemblyProduct("BooksOneInc.DAL")]
 [assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("56c390e7-b9f6-420e-a5b6-702dba06d382")]
+[assembly: Guid("1a9a0342-c22a-42bf-acf4-a8d79905fdd3")]
 
 // Сведения о версии сборки состоят из указанных ниже четырех значений:
 //

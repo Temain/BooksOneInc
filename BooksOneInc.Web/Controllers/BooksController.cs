@@ -3,8 +3,8 @@ using System.Data.Entity;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
-using BooksOneInc.Service.Abstractions.Services;
-using BooksOneInc.Service.Abstractions.Services.Models;
+using BooksOneInc.Services.Interfaces;
+using BooksOneInc.Services.Models;
 
 namespace BooksOneInc.Web.Controllers
 {

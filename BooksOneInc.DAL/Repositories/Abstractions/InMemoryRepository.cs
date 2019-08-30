@@ -5,10 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using BooksOneInc.DAL.Common;
 using BooksOneInc.Domain.Interfaces;
-using BooksOneInc.Service.Abstractions.Common;
 
-namespace BooksOneInc.Service.Abstractions.Repositories
+namespace BooksOneInc.DAL.Repositories.Abstractions
 {
 	public abstract class InMemoryRepository<T> : IRepository<T> where T : class, IEntity
 	{

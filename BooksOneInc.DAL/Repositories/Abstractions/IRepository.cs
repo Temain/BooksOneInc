@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BooksOneInc.Domain.Interfaces;
 
-namespace BooksOneInc.Service.Abstractions.Repositories
+namespace BooksOneInc.DAL.Repositories.Abstractions
 {
 	public interface IRepository<T> where T : class, IEntity
 	{

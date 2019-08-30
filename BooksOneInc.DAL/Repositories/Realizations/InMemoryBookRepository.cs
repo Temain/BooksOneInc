@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using BooksOneInc.DAL.Repositories.Abstractions;
 using BooksOneInc.Domain.Models;
-using BooksOneInc.Service.Abstractions.Repositories;
 
-namespace BooksOneInc.Service.Realizations
+namespace BooksOneInc.DAL.Repositories.Realizations
 {
 	public class BookRepository : InMemoryRepository<Book>
 	{

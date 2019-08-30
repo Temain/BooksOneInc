@@ -3,7 +3,7 @@ using System.Data.Entity.Infrastructure;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BooksOneInc.Service.Abstractions.Common
+namespace BooksOneInc.DAL.Common
 {
 	public class AsyncEnumerator<T> : IDbAsyncEnumerator<T>
 	{

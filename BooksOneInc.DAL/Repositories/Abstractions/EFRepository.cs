@@ -5,11 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using BooksOneInc.Domain.Interfaces;
 
-namespace BooksOneInc.Service.Abstractions.Repositories
+namespace BooksOneInc.DAL.Repositories.Abstractions
 {
 	/// <summary>
 	/// Базовый класс репозитория с использованием EF.
-	/// Реализовать при необходимости и зарегистрировать в DI контейнере.
+	/// Реализовать при необходимости и зарегистрировать в DI контейнере вместо InMemoryRepository.
 	/// </summary>
 	public abstract class EFRepository<T> : IRepository<T> where T : class, IEntity
 	{

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using BooksOneInc.DAL.Repositories.Abstractions;
 using BooksOneInc.Domain.Models;
-using BooksOneInc.Service.Abstractions.Repositories;
-using BooksOneInc.Service.Abstractions.Services;
-using BooksOneInc.Service.Abstractions.Services.Models;
+using BooksOneInc.Services.Interfaces;
+using BooksOneInc.Services.Models;
 
-namespace BooksOneInc.Service
+namespace BooksOneInc.Services
 {
 	public class BookService : IBookService
 	{

@@ -218,17 +218,17 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BooksOneInc.DAL\BooksOneInc.DAL.csproj">
+      <Project>{1A9A0342-C22A-42BF-ACF4-A8D79905FDD3}</Project>
+      <Name>BooksOneInc.DAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BooksOneInc.Domain\BooksOneInc.Domain.csproj">
       <Project>{EA21689E-ECE4-4642-B9F5-B00952EDB614}</Project>
       <Name>BooksOneInc.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BooksOneInc.Service.Abstractions\BooksOneInc.Service.Abstractions.csproj">
-      <Project>{F37886B0-F27C-4838-BF7A-093207FCD2DD}</Project>
-      <Name>BooksOneInc.Service.Abstractions</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\BooksOneInc.Service\BooksOneInc.Service.csproj">
-      <Project>{56c390e7-b9f6-420e-a5b6-702dba06d382}</Project>
-      <Name>BooksOneInc.Service</Name>
+    <ProjectReference Include="..\BooksOneInc.Services\BooksOneInc.Services.csproj">
+      <Project>{1A8AFFEB-B46C-427E-886B-DA80955FCD8C}</Project>
+      <Name>BooksOneInc.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

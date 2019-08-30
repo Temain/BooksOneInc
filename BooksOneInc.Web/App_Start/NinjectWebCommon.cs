@@ -8,11 +8,11 @@ namespace BooksOneInc.Web.App_Start
 	using System;
 	using System.Web;
 	using System.Web.Http;
+	using BooksOneInc.DAL.Repositories.Abstractions;
+	using BooksOneInc.DAL.Repositories.Realizations;
 	using BooksOneInc.Domain.Models;
-	using BooksOneInc.Service;
-	using BooksOneInc.Service.Abstractions.Repositories;
-	using BooksOneInc.Service.Abstractions.Services;
-	using BooksOneInc.Service.Realizations;
+	using BooksOneInc.Services;
+	using BooksOneInc.Services.Interfaces;
 	using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 	using Ninject;
 	using Ninject.Web.Common;

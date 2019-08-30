@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace BooksOneInc.Service.Abstractions.Common
+namespace BooksOneInc.DAL.Common
 {
 	public class AsyncQueryProvider<TEntity> : IDbAsyncQueryProvider
 	{

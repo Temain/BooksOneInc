@@ -8,6 +8,11 @@ namespace BooksOneInc.Domain.Models
 	/// </summary>
 	public class Book : IEntity
 	{
+		public Book()
+		{
+			Authors = new List<Author>();
+		}
+
 		/// <summary>
 		/// Идентификатор.
 		/// </summary>
