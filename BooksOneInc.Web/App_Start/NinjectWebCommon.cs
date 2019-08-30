@@ -5,19 +5,20 @@ using Ninject.Web.Common.WebHost;
 
 namespace BooksOneInc.Web.App_Start
 {
+	using System;
+	using System.Web;
+	using System.Web.Http;
 	using BooksOneInc.Domain.Models;
 	using BooksOneInc.Service;
-	using BooksOneInc.Service.Abstractions;
+	using BooksOneInc.Service.Abstractions.Repositories;
+	using BooksOneInc.Service.Abstractions.Services;
 	using BooksOneInc.Service.Realizations;
 	using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 	using Ninject;
 	using Ninject.Web.Common;
-    using Ninject.Web.WebApi;
-    using System;
-	using System.Web;
-    using System.Web.Http;
+	using Ninject.Web.WebApi;
 
-    public static class NinjectWebCommon
+	public static class NinjectWebCommon
 	{
 		private static readonly Bootstrapper bootstrapper = new Bootstrapper();
 

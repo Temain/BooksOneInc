@@ -1,6 +1,3 @@
-using BooksOneInc.Web.App_Start;
-using Ninject;
-using Ninject.Web.Mvc;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;

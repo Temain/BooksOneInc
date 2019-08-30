@@ -1,4 +1,4 @@
-﻿namespace BooksOneInc.Service.Models
+﻿namespace BooksOneInc.Service.Abstractions.Services.Models
 {
 	public class BookView
 	{

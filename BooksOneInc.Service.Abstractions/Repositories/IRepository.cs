@@ -1,11 +1,11 @@
-﻿using BooksOneInc.Domain.Interfaces;
-using System;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using BooksOneInc.Domain.Interfaces;
 
-namespace BooksOneInc.Service.Abstractions
+namespace BooksOneInc.Service.Abstractions.Repositories
 {
 	public interface IRepository<T> where T : class, IEntity
 	{
@@ -14,5 +14,9 @@ namespace BooksOneInc.Service.Abstractions
 		Task<T> GetAsync(Expression<Func<T, bool>> whereExpr, CancellationToken cancellationToken);
 
 		Task<T> GetByIdAsync(int id, CancellationToken cancellationToken);
+
+		T Add(T entity);
+
+		T Remove(T entity);
 	}
 }

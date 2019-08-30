@@ -1,10 +1,10 @@
-﻿using BooksOneInc.Service.Abstractions;
-using BooksOneInc.Service.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Http;
+using BooksOneInc.Service.Abstractions.Services;
+using BooksOneInc.Service.Abstractions.Services.Models;
 
 namespace BooksOneInc.Web.Controllers
 {

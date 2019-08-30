@@ -1,21 +1,30 @@
-﻿using BooksOneInc.Domain.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using BooksOneInc.Domain.Interfaces;
+using BooksOneInc.Service.Abstractions.Common;
 
-namespace BooksOneInc.Service.Abstractions
+namespace BooksOneInc.Service.Abstractions.Repositories
 {
 	public abstract class InMemoryRepository<T> : IRepository<T> where T : class, IEntity
 	{
-		protected AsyncEnumerable<T> _context;
+		private readonly List<T> _source;
+		private readonly AsyncEnumerable<T> _context;
 
 		public InMemoryRepository()
 		{
-			_context = new AsyncEnumerable<T>(new List<T>());
+			_source = new List<T>();
+			_context = new AsyncEnumerable<T>(_source);
+		}
+
+		public InMemoryRepository(List<T> source)
+		{
+			_source = source;
+			_context = new AsyncEnumerable<T>(_source);
 		}
 
 		public virtual IQueryable<T> GetAll(Expression<Func<T, bool>> whereExpr = null)
@@ -44,6 +53,18 @@ namespace BooksOneInc.Service.Abstractions
 		public virtual Task<T> GetByIdAsync(int id, CancellationToken cancellationToken)
 		{
 			return _context.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+		}
+
+		public virtual T Add(T entity)
+		{
+			_source.Add(entity);
+			return entity;
+		}
+
+		public virtual T Remove(T entity)
+		{
+			_source.Remove(entity);
+			return entity;
 		}
 	}
 }

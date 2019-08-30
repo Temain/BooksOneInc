@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksOneInc.Domain", "Books
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksOneInc.Service", "BooksOneInc.Service\BooksOneInc.Service.csproj", "{56C390E7-B9F6-420E-A5B6-702DBA06D382}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BooksOneInc.Service.Abstractions", "BooksOneInc.Service.Abstractions\BooksOneInc.Service.Abstractions.csproj", "{F37886B0-F27C-4838-BF7A-093207FCD2DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{56C390E7-B9F6-420E-A5B6-702DBA06D382}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56C390E7-B9F6-420E-A5B6-702DBA06D382}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56C390E7-B9F6-420E-A5B6-702DBA06D382}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F37886B0-F27C-4838-BF7A-093207FCD2DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F37886B0-F27C-4838-BF7A-093207FCD2DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F37886B0-F27C-4838-BF7A-093207FCD2DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F37886B0-F27C-4838-BF7A-093207FCD2DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
