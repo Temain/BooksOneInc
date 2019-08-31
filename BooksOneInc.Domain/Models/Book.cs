@@ -1,4 +1,5 @@
 ﻿using BooksOneInc.Domain.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace BooksOneInc.Domain.Models
@@ -41,11 +42,11 @@ namespace BooksOneInc.Domain.Models
 		/// <summary>
 		/// Изображение.
 		/// </summary>
-		public string ImagePath { get; set; }
+		public string Image { get; set; }
 
 		/// <summary>
 		/// Список авторов.
 		/// </summary>
-		public List<Author> Authors { get; set; }
+		public IEnumerable<Author> Authors { get; set; }
 	}
 }

@@ -1,11 +1,11 @@
-﻿using BooksOneInc.Domain.Interfaces;
+﻿using System;
 
-namespace BooksOneInc.Domain.Models
+namespace BooksOneInc.Services.Models
 {
 	/// <summary>
 	/// Автор.
 	/// </summary>
-	public class Author: IEntity
+	public class AuthorView
 	{
 		/// <summary>
 		/// Идентфиикатор.

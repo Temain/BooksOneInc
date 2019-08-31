@@ -1,4 +1,7 @@
-﻿namespace BooksOneInc.Services.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace BooksOneInc.Services.Models
 {
 	public class BookView
 	{
@@ -30,6 +33,11 @@
 		/// <summary>
 		/// Изображение.
 		/// </summary>
-		public string ImagePath { get; set; }
+		public string Image { get; set; }
+
+		/// <summary>
+		/// Авторы.
+		/// </summary>
+		public IEnumerable<AuthorView> Authors { get; set; }
 	}
 }

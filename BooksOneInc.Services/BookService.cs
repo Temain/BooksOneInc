@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
@@ -42,19 +43,31 @@ namespace BooksOneInc.Services
 				.CountAsync(cancellationToken);
 			var dbBook = new Book
 			{
-				Id = count + 1, 
+				Id = count + 1,
 				Title = book.Title,
 				NumberOfPages = book.NumberOfPages,
 				Publisher = book.Publisher,
-				ImagePath = book.ImagePath,
+				Image = book.Image,
 				Year = book.Year
 			};
 
-			//var authors = book.Authors;
-			//if (!authors.Any())
-			//{
-			//	throw new Exception("Необходимо указать минимум одного автора.");
-			//}
+			var authors = book.Authors;
+			if (!authors.Any())
+			{
+				throw new Exception("Необходимо указать минимум одного автора.");
+			}
+
+			var dbAuthors = new List<Author>();
+			foreach (var author in authors)
+			{
+				dbAuthors.Add(new Author
+				{
+					Id = author.Id,
+					Name = author.Name,
+					Surname = author.Surname
+				});
+			}
+			dbBook.Authors = dbAuthors;
 
 			_bookRepository.Add(dbBook);
 
@@ -66,14 +79,21 @@ namespace BooksOneInc.Services
 			var dbBook = await _bookRepository.GetByIdAsync(id, cancellationToken);
 			if (dbBook == null)
 			{
-
+				throw new ArgumentNullException(nameof(dbBook));
 			}
 
 			dbBook.Title = book.Title;
 			dbBook.NumberOfPages = book.NumberOfPages;
 			dbBook.Publisher = book.Publisher;
 			dbBook.Year = book.Year;
-			dbBook.ImagePath = book.ImagePath;
+			dbBook.Image = book.Image;
+
+			var dbAuthors = dbBook.Authors;
+			var authors = book.Authors;
+			foreach (var author in authors)
+			{
+
+			}
 
 			return dbBook;
 		}
@@ -83,7 +103,7 @@ namespace BooksOneInc.Services
 			var dbBook = await _bookRepository.GetByIdAsync(id, cancellationToken);
 			if (dbBook == null)
 			{
-
+				throw new ArgumentNullException(nameof(dbBook));
 			}
 
 			_bookRepository.Remove(dbBook);
@@ -101,7 +121,14 @@ namespace BooksOneInc.Services
 					NumberOfPages = b.NumberOfPages,
 					Publisher = b.Publisher,
 					Year = b.Year,
-					ImagePath = b.ImagePath
+					Image = b.Image,
+					Authors = b.Authors
+						.Select(a => new AuthorView
+						{
+							Id = a.Id,
+							Name = a.Name,
+							Surname = a.Surname
+						})
 				});
 
 			return query;
