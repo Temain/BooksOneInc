@@ -58,14 +58,18 @@ namespace BooksOneInc.Services
 			}
 
 			var dbAuthors = new List<Author>();
+			var maxAuthorId = await _bookRepository.GetAll()
+				.SelectMany(b => b.Authors.Select(a => a.Id))
+				.MaxAsync(cancellationToken);
 			foreach (var author in authors)
 			{
 				dbAuthors.Add(new Author
 				{
-					Id = author.Id,
+					Id = maxAuthorId + 1,
 					Name = author.Name,
 					Surname = author.Surname
 				});
+				maxAuthorId++;
 			}
 			dbBook.Authors = dbAuthors;
 
@@ -89,6 +93,11 @@ namespace BooksOneInc.Services
 			dbBook.Image = book.Image;
 
 			var authors = book.Authors;
+			if (authors == null || !authors.Any())
+			{
+				throw new Exception("Необходимо указать минимум одного автора.");
+			}
+
 			var authorIds = authors.Select(a => a.Id);
 			var dbAuthors = dbBook.Authors.Where(a => authorIds.Contains(a.Id)).ToList();
 			var dbAuthorsDict = dbAuthors.ToDictionary(k => k.Id);

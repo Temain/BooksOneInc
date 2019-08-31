@@ -11,7 +11,11 @@ namespace BooksOneInc.Web.App_Start
 	using BooksOneInc.Domain.Models;
 	using BooksOneInc.Services;
 	using BooksOneInc.Services.Interfaces;
-	using Microsoft.Web.Infrastructure.DynamicModuleHelper;
+    using BooksOneInc.Services.Models;
+    using BooksOneInc.Web.Validation;
+    using FluentValidation;
+    using FluentValidation.WebApi;
+    using Microsoft.Web.Infrastructure.DynamicModuleHelper;
 
 	using Ninject;
 	using Ninject.Web.Common;
@@ -52,6 +56,7 @@ namespace BooksOneInc.Web.App_Start
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
                 RegisterServices(kernel);
+				RegisterValidation(kernel);
 
 				GlobalConfiguration.Configuration.DependencyResolver = new NinjectDependencyResolver(kernel);
 
@@ -70,11 +75,14 @@ namespace BooksOneInc.Web.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
-			// Repositories
-			kernel.Bind<IRepository<Book>>().To<BookRepository>();
-
-			// Services
+			kernel.Bind<IRepository<Book>>().To<BookRepository>().InSingletonScope();
 			kernel.Bind<IBookService>().To<BookService>();
-		}        
-    }
+		}
+
+		private static void RegisterValidation(IKernel kernel)
+		{
+			kernel.Bind<IValidator<BookView>>().To<BookViewValidator>();
+			kernel.Bind<IValidator<AuthorView>>().To<AuthorViewValidator>();
+		}
+	}
 }

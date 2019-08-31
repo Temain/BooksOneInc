@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using BooksOneInc.Web.App_Start;
+using FluentValidation.WebApi;
 
 namespace BooksOneInc.Web
 {
@@ -19,6 +21,10 @@ namespace BooksOneInc.Web
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
-        }
-    }
+
+			FluentValidationModelValidatorProvider.Configure(config, provider => {
+				provider.ValidatorFactory = new NinjectValidatorFactory();
+			});
+		}
+	}
 }

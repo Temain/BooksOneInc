@@ -32,7 +32,7 @@ namespace BooksOneInc.Web.Controllers
 
 		// GET: api/Books/5
 		[HttpGet]
-		[Route("{id:int}")]
+		[Route("{id:int}", Name = "GetBook")]
 		public async Task<IHttpActionResult> GetBook(int id, CancellationToken cancellationToken)
 		{
 			var book = await _bookService.GetBooks(a => a.Id == id)
@@ -56,7 +56,7 @@ namespace BooksOneInc.Web.Controllers
 
 			var saved = await _bookService.AddBookAsync(book, cancellationToken);
 
-			return CreatedAtRoute("DefaultApi", new { id = saved.Id }, saved);
+			return CreatedAtRoute("GetBook", new { id = saved.Id }, saved);
 		}
 
 		// PUT: api/Books/2
