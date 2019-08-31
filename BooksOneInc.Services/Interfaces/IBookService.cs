@@ -16,7 +16,7 @@ namespace BooksOneInc.Services.Interfaces
 
 		Task<Book> AddBookAsync(BookView book, CancellationToken cancellationToken);
 
-		Task<Book> UpdateBookAsync(BookView book, CancellationToken cancellationToken);
+		Task<Book> UpdateBookAsync(int id, BookView book, CancellationToken cancellationToken);
 
 		Task<Book> DeleteBookAsync(int id, CancellationToken cancellationToken);
 	}

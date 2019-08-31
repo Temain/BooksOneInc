@@ -61,9 +61,9 @@ namespace BooksOneInc.Services
 			return dbBook;
 		}
 
-		public async Task<Book> UpdateBookAsync(BookView book, CancellationToken cancellationToken)
+		public async Task<Book> UpdateBookAsync(int id, BookView book, CancellationToken cancellationToken)
 		{
-			var dbBook = await _bookRepository.GetByIdAsync(book.Id, cancellationToken);
+			var dbBook = await _bookRepository.GetByIdAsync(id, cancellationToken);
 			if (dbBook == null)
 			{
 
