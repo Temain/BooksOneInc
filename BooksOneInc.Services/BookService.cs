@@ -39,11 +39,11 @@ namespace BooksOneInc.Services
 
 		public async Task<Book> AddBookAsync(BookView book, CancellationToken cancellationToken)
 		{
-			var count = await _bookRepository.GetAll()
-				.CountAsync(cancellationToken);
+			var maxId = await _bookRepository.GetAll()
+				.MaxAsync(b => b.Id, cancellationToken);
 			var dbBook = new Book
 			{
-				Id = count + 1,
+				Id = maxId + 1,
 				Title = book.Title,
 				NumberOfPages = book.NumberOfPages,
 				Publisher = book.Publisher,
@@ -52,7 +52,7 @@ namespace BooksOneInc.Services
 			};
 
 			var authors = book.Authors;
-			if (!authors.Any())
+			if (authors == null || !authors.Any())
 			{
 				throw new Exception("Необходимо указать минимум одного автора.");
 			}
@@ -88,12 +88,33 @@ namespace BooksOneInc.Services
 			dbBook.Year = book.Year;
 			dbBook.Image = book.Image;
 
-			var dbAuthors = dbBook.Authors;
 			var authors = book.Authors;
-			foreach (var author in authors)
+			var authorIds = authors.Select(a => a.Id);
+			var dbAuthors = dbBook.Authors.Where(a => authorIds.Contains(a.Id)).ToList();
+			var dbAuthorsDict = dbAuthors.ToDictionary(k => k.Id);
+			var maxAuthorId = await _bookRepository.GetAll()
+				.SelectMany(b => b.Authors.Select(a => a.Id))
+				.MaxAsync(cancellationToken);
+			foreach (var author in book.Authors)
 			{
-
+				if (!dbAuthorsDict.ContainsKey(author.Id))
+				{
+					dbAuthors.Add(new Author
+					{
+						Id = maxAuthorId + 1,
+						Name = author.Name,
+						Surname = author.Surname
+					});
+				}
+				else
+				{
+					var dbAuthor = dbAuthorsDict[author.Id];
+					dbAuthor.Name = author.Name;
+					dbAuthor.Surname = author.Surname;
+				}
 			}
+
+			dbBook.Authors = dbAuthors;
 
 			return dbBook;
 		}
