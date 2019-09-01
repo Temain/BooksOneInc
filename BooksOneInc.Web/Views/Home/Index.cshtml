@@ -57,10 +57,12 @@
             <div class="form-group col-md-5">
                 <label for="author1">Имя автора</label>
                 <input type="text" class="form-control author-name" placeholder="Введите имя автора...">
+                <div class="invalid-feedback"></div>
             </div>
             <div class="form-group col-md-5">
                 <label for="author1">Фамилия автора</label>
                 <input type="text" class="form-control author-surname" placeholder="Введите фамилию автора...">
+                <div class="invalid-feedback"></div>
             </div>
             <div class="form-group col-md-2">
                 <button type="button" class="btn btn-outline-danger btn-sm btn-author-delete">Удалить автора</button>
@@ -190,10 +192,7 @@
             // Добавление автора.
             $('#addAuthorBtn').unbind();
             $('#addAuthorBtn').click(function () {
-                var authorDiv = $('.author:first').clone();
-                authorDiv.find('input').val('');
-                authorDiv.insertAfter('.author:last');
-                bindAuthorEvents();
+                addAuthor();
             });
         }
 
@@ -201,10 +200,7 @@
             // Удаление автора.
             $('.btn-author-delete').unbind();
             $('.btn-author-delete').click(function () {
-                var authors = $('.author');
-                if (authors.length > 1) {
-                    $(this).closest('.author').remove();
-                }
+                deleteAuthor();
             });
         }
 
@@ -245,9 +241,9 @@
             return {
                 id: $('#id').val() || 0,
                 title: $('#title').val(),
-                numberOfPages: $('#numberOfPages').val(),
+                numberOfPages: $('#numberOfPages').val() || 0,
                 publisher: $('#publisher').val(),
-                year: $('#year').val(),
+                year: $('#year').val() || 0,
                 image: $('#imagePreview').attr('src'),
                 authors: $('.author').map(function (index, author) {
                     return {
@@ -269,6 +265,20 @@
             $('.author:first').find('input').val('');
             $('#imagePreview').attr('src', '');
             clearValidationErrors();
+        }
+
+        function addAuthor() {
+            var authorDiv = $('.author:first').clone();
+            authorDiv.find('input').val('');
+            authorDiv.insertAfter('.author:last');
+            bindAuthorEvents();
+        }
+
+        function deleteAuthor() {
+            var authors = $('.author');
+            if (authors.length > 1) {
+                $(this).closest('.author').remove();
+            }
         }
 
         //#endregion Form
@@ -304,8 +314,7 @@
                     } else {
                         alert('Ошибка при добавлении книги.');
                     }
-                },
-                dataType: 'json'
+                }
             });
         }
 
@@ -329,8 +338,7 @@
                     } else {
                         alert('Ошибка при изменении книги.');
                     }
-                },
-                dataType: 'json'
+                }
             });
         }
 
@@ -345,14 +353,13 @@
                 },
                 error: function (data) {
                     alert('Ошибка при удалении книги.');
-                },
-                dataType: 'json'
+                }
             });
         }
 
         //#endregion Save
 
-        //#region Validation
+        //#region Validation (Server side)
 
         function clearValidationErrors() {
             $('#bookForm input').removeClass('is-invalid');
@@ -363,10 +370,23 @@
             clearValidationErrors();
 
             $.each(errors, function (key, values) {
-                var keyParts = key.split('.');
-                var field = keyParts[keyParts.length - 1];
-                field = field.charAt(0).toLowerCase() + field.slice(1);
-                var input = $('#' + field); 
+                debugger
+                var input;
+                var keyParts = key.split('.').slice(1);
+                if (key.includes('[') && keyParts.length > 1) {
+                    var indexPart = keyParts[0]; 
+                    var index = indexPart.substring(indexPart.lastIndexOf("[") + 1, indexPart.lastIndexOf("]"));
+                    var type = indexPart.substring(0, indexPart.lastIndexOf("[") - 1).toLowerCase();
+                    var item = $('.' + type)[index];
+                    var fieldPart = keyParts[1];
+                    var field = fieldPart.charAt(0).toLowerCase() + fieldPart.slice(1);
+                    input = $(item).find('.' + type + '-' + field);
+                } else {
+                    var field = keyParts[keyParts.length - 1];
+                    field = field.charAt(0).toLowerCase() + field.slice(1);
+                    input = $('#' + field); 
+                }
+
                 input.addClass('is-invalid');
                 var errorsDiv = input.parent().find('.invalid-feedback');
                 values.forEach(function (value) {
