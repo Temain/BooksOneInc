@@ -11,7 +11,9 @@
 <table id="books" class="display" style="width:100%">
     <thead>
         <tr>
+            <th>Image</th>
             <th>Title</th>
+            <th>Authors</th>
             <th>NumberOfPages</th>
             <th>Publisher</th>
             <th>Year</th>
@@ -29,29 +31,64 @@
     <div class="form-group">
         <label for="title">Заголовок</label>
         <input type="text" class="form-control" id="title" placeholder="Введите заголовок...">
-    </div>
-    <div class="form-group">
-        <label for="numberOfPages">Количество страниц</label>
-        <input type="number" class="form-control" id="numberOfPages" placeholder="Введите количество страниц...">
+        <div class="invalid-feedback"></div>
     </div>
     <div class="form-group">
         <label for="publisher">Название издательства</label>
         <input type="text" class="form-control" id="publisher" placeholder="Введите издательство...">
+        <div class="invalid-feedback"></div>
     </div>
-    <div class="form-group">
-        <label for="year">Год публикации</label>
-        <input type="number" class="form-control" id="year" placeholder="Введите год...">
-        <div class="invalid-feedback">
-            dfsdfs
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="numberOfPages">Количество страниц</label>
+            <input type="number" class="form-control" id="numberOfPages" placeholder="Введите количество страниц...">
+            <div class="invalid-feedback"></div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="year">Год публикации</label>
+            <input type="number" class="form-control" id="year" placeholder="Введите год...">
+            <div class="invalid-feedback"></div>
         </div>
     </div>
+    <div class="form-group">
+        <h4>Авторы</h4>
+        <div class="form-row author">
+            <input type="hidden" class="author-id" />
+            <div class="form-group col-md-5">
+                <label for="author1">Имя автора</label>
+                <input type="text" class="form-control author-name" placeholder="Введите имя автора...">
+            </div>
+            <div class="form-group col-md-5">
+                <label for="author1">Фамилия автора</label>
+                <input type="text" class="form-control author-surname" placeholder="Введите фамилию автора...">
+            </div>
+            <div class="form-group col-md-2">
+                <button type="button" class="btn btn-outline-danger btn-sm btn-author-delete">Удалить автора</button>
+            </div>
+        </div>
+        <div class="invalid-feedback"></div>
+        <button type="button" id="addAuthorBtn" class="btn btn-outline-primary btn-sm">Добавить автора</button>
+    </div>
+
+    <div class="form-group">
+        <label for="image">Изображение</label>
+        <input type="file" class="form-control-file" id="image">
+        <img id="imagePreview" src="#" width="200"/>
+    </div>
+
     <button type="submit" class="btn btn-primary">Сохранить</button>
 </form>
 
 @section Scripts {
     @Scripts.Render("~/bundles/datatables")
     <script>
+        var table;
+
         $(function () {
+            loadBooks();
+        });
+
+        function loadBooks() {
             $.ajax({
                 type: 'GET',
                 url: '/api/books',
@@ -63,22 +100,48 @@
                     alert('Ошибка! ' + data);
                 }
             });
-        });
+        }
 
         function initTable(data) {
-            var table =  $('#books').DataTable({
+            table =  $('#books').DataTable({
                 data: data,
                 stateSave: true,
                 language: {
                     url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Russian.json'
                 },
                 columns: [
+                    {
+                        data: 'Image',
+                        title: 'Изображение',
+                        orderable: false,
+                        render: function (data) {
+                            if (data) {
+                                return '<img src="' + data + '" width="50">';
+                            }
+                            return '';
+                        }
+                    },
                     { data: 'Title', title: 'Наименование' },
-                    { data: 'NumberOfPages', title: 'Страниц' },
-                    { data: 'Publisher', title: 'Издательство'  },
+                    {
+                        data: 'Authors',
+                        title: 'Авторы',
+                        orderable: false,
+                        render: function (authors) {
+                            var content = '<ul>';
+                            authors.forEach(function (author) {
+                                content += '<li>' + author.Name + ' ' + author.Surname + '</li>';
+                            });
+                            content += '</ul>';
+                            return content;
+                        }
+                    },
+                    { data: 'NumberOfPages', title: 'Страниц', orderable: false },
+                    { data: 'Publisher', title: 'Издательство', orderable: false },
                     { data: 'Year', title: 'Год' },
                     {
-                        targets: -1, title: 'Действия',
+                        targets: -1,
+                        title: 'Действия',
+                        orderable: false,
                         defaultContent: `
                             <button class='btn btn-success btn-edit'>Изменить</button>
                             <button class='btn btn-danger btn-delete'>Удалить</button>`
@@ -89,33 +152,65 @@
             bindEvents(table);
         }
 
-        function bindEvents(table) {
-            // Добвление.
+        function reloadBooks() {
+            table.destroy();
+            loadBooks();
+        }
+
+        //#region Events
+
+        function bindEvents() {
+            // Добвление книги.
+            $('#addBtn').unbind();
             $('#addBtn').click(function () {
                 $('#bookFormTitle').text('Добавить книгу');
                 clearFormData();
             });
 
-            // Редактирование.
+            // Редактирование книги.
             $('#books tbody').on('click', '.btn-edit', function () {
                 var data = table.row($(this).parents('tr')).data();
                 $('#bookFormTitle').text('Редактировать книгу');
                 setFormData(data);
             });
 
-            // Удаление.
+            // Удаление книги.
             $('#books tbody').on('click', '.btn-delete', function () {
-                table.row($(this).parents('tr'))
-                    .remove()
-                    .draw();
+                var data = table.row($(this).parents('tr')).data();
+                deleteBook(data.Id);
             });
 
-            // Сохранение.
+            // Сохранение книги.
+            $('#bookForm').unbind();
             $('#bookForm').submit(function(e) {
                 e.preventDefault();
                 save();
             });
+
+            // Добавление автора.
+            $('#addAuthorBtn').unbind();
+            $('#addAuthorBtn').click(function () {
+                var authorDiv = $('.author:first').clone();
+                authorDiv.find('input').val('');
+                authorDiv.insertAfter('.author:last');
+                bindAuthorEvents();
+            });
         }
+
+        function bindAuthorEvents() {
+            // Удаление автора.
+            $('.btn-author-delete').unbind();
+            $('.btn-author-delete').click(function () {
+                var authors = $('.author');
+                if (authors.length > 1) {
+                    $(this).closest('.author').remove();
+                }
+            });
+        }
+
+        //#endregion Events
+
+        //#region Form
 
         function setFormData(data) {
             $('#id').val(data.Id);
@@ -123,15 +218,44 @@
             $('#numberOfPages').val(data.NumberOfPages);
             $('#publisher').val(data.Publisher);
             $('#year').val(data.Year);
+            $('#imagePreview').attr('src', data.Image);
+            
+            var authors = data.Authors;
+            $('.author:not(:first)').remove();
+            var firstAuthorDiv = $('.author:first');
+            for (let i = 0; i < authors.length; i++) {
+                var authorDiv;
+                if (i == 0) {
+                    authorDiv = firstAuthorDiv;
+                }
+                else {
+                    authorDiv = firstAuthorDiv.clone();
+                }
+
+                var author = authors[i];
+                authorDiv.find('.author-id').val(author.Id);
+                authorDiv.find('.author-name').val(author.Name);
+                authorDiv.find('.author-surname').val(author.Surname);
+                authorDiv.insertAfter('.author:last');
+            }
+            bindAuthorEvents();
         }
 
         function getFormData() {
             return {
-                id: $('#id').val(),
+                id: $('#id').val() || 0,
                 title: $('#title').val(),
                 numberOfPages: $('#numberOfPages').val(),
                 publisher: $('#publisher').val(),
-                year: $('#year').val()
+                year: $('#year').val(),
+                image: $('#imagePreview').attr('src'),
+                authors: $('.author').map(function (index, author) {
+                    return {
+                        id: $(author).find('.author-id').val() || 0,
+                        name: $(author).find('.author-name').val(),
+                        surname: $(author).find('.author-surname').val()
+                    };
+                }).get()
             };
         }
 
@@ -141,7 +265,15 @@
             $('#numberOfPages').val('');
             $('#publisher').val('');
             $('#year').val('');
+            $('.author:not(:first)').remove();
+            $('.author:first').find('input').val('');
+            $('#imagePreview').attr('src', '');
+            clearValidationErrors();
         }
+
+        //#endregion Form
+
+        //#region Save
 
         function save() {
             var data = getFormData();
@@ -153,7 +285,28 @@
         }
 
         function addBook(data) {
-            alert('Add!!');
+            var dataJson = JSON.stringify(data);
+            $.ajax({
+                type: 'POST',
+                url: '/api/books',
+                contentType: 'application/json',
+                data: dataJson,
+                success: function () {
+                    clearValidationErrors();
+                    reloadBooks();
+                    alert('Запись успешно добавлена.');
+                },
+                error: function (data) {
+                    debugger
+                    var response = data.responseJSON;
+                    if (response && response.ModelState) {
+                        setValidationErrors(response.ModelState);
+                    } else {
+                        alert('Ошибка при добавлении книги.');
+                    }
+                },
+                dataType: 'json'
+            });
         }
 
         function editBook(data) {
@@ -163,18 +316,43 @@
                 url: '/api/books/' + data.id,
                 contentType: 'application/json',
                 data: dataJson,
-                success: function (data) {
+                success: function () {
+                    clearValidationErrors();
+                    reloadBooks();
                     alert('Запись успешно обновлена.');
                 },
                 error: function (data) {
+                    debugger
                     var response = data.responseJSON;
                     if (response && response.ModelState) {
                         setValidationErrors(response.ModelState);
+                    } else {
+                        alert('Ошибка при изменении книги.');
                     }
                 },
                 dataType: 'json'
             });
         }
+
+        function deleteBook(id) {
+            $.ajax({
+                type: 'DELETE',
+                url: '/api/books/' + id,
+                contentType: 'application/json',
+                success: function () {
+                    reloadBooks();
+                    alert('Запись успешно удалена.');
+                },
+                error: function (data) {
+                    alert('Ошибка при удалении книги.');
+                },
+                dataType: 'json'
+            });
+        }
+
+        //#endregion Save
+
+        //#region Validation
 
         function clearValidationErrors() {
             $('#bookForm input').removeClass('is-invalid');
@@ -185,9 +363,9 @@
             clearValidationErrors();
 
             $.each(errors, function (key, values) {
-                debugger
                 var keyParts = key.split('.');
-                var field = keyParts[keyParts.length - 1].toLowerCase();
+                var field = keyParts[keyParts.length - 1];
+                field = field.charAt(0).toLowerCase() + field.slice(1);
                 var input = $('#' + field); 
                 input.addClass('is-invalid');
                 var errorsDiv = input.parent().find('.invalid-feedback');
@@ -196,5 +374,27 @@
                 });
             });
         }
+
+        //#endregion Validation
+
+        //#region Image
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+    
+                reader.onload = function(e) {
+                    $('#imagePreview').attr('src', e.target.result);
+                }
+    
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $("#image").change(function() {
+            readURL(this);
+        });
+
+        //#endregion Image
     </script>
 }
