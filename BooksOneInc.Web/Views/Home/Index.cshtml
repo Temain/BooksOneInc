@@ -115,6 +115,7 @@
                     {
                         data: 'Image',
                         title: 'Изображение',
+                        width: '20%',
                         orderable: false,
                         render: function (data) {
                             if (data) {
@@ -123,10 +124,11 @@
                             return '';
                         }
                     },
-                    { data: 'Title', title: 'Наименование' },
+                    { data: 'Title', title: 'Наименование', width: '30%' },
                     {
                         data: 'Authors',
                         title: 'Авторы',
+                        width: '20%',
                         orderable: false,
                         render: function (authors) {
                             var content = '<ul>';
@@ -137,8 +139,8 @@
                             return content;
                         }
                     },
-                    { data: 'NumberOfPages', title: 'Страниц', orderable: false },
-                    { data: 'Publisher', title: 'Издательство', orderable: false },
+                    { data: 'NumberOfPages', title: 'Страниц', width: '10%', orderable: false },
+                    { data: 'Publisher', title: 'Издательство', width: '20%', orderable: false },
                     { data: 'Year', title: 'Год' },
                     {
                         targets: -1,
@@ -167,7 +169,6 @@
         function bindEvents() {
             // Добвление книги.
             $('#addBtn').click(function () {
-                $('#bookFormTitle').text('Добавить книгу');
                 clearFormData();
             });
 
@@ -267,6 +268,7 @@
         }
 
         function clearFormData() {
+            $('#bookFormTitle').text('Добавить книгу');
             $('#id').val('');
             $('#title').val('');
             $('#numberOfPages').val('');
@@ -274,6 +276,7 @@
             $('#year').val('');
             $('.author:not(:first)').remove();
             $('.author:first').find('input').val('');
+            $('#image').val('');
             $('#imagePreview').attr('src', '');
             clearValidationErrors();
         }
@@ -282,6 +285,7 @@
             var authorDiv = $('.author:first').clone();
             authorDiv.find('input').val('');
             authorDiv.insertAfter('.author:last');
+            authorDiv.find('input').removeClass('is-invalid');
             bindAuthorEvents();
         }
 
@@ -313,7 +317,7 @@
                 contentType: 'application/json',
                 data: dataJson,
                 success: function () {
-                    clearValidationErrors();
+                    clearFormData();
                     reloadBooks();
                     alert('Запись успешно добавлена.');
                 },
@@ -358,9 +362,10 @@
                 contentType: 'application/json',
                 success: function () {
                     reloadBooks();
+                    clearFormData();
                     alert('Запись успешно удалена.');
                 },
-                error: function (data) {
+                error: function () {
                     alert('Ошибка при удалении книги.');
                 }
             });
