@@ -4,6 +4,10 @@
 
 @Styles.Render("~/Content/datatables")
 
+<h2>Список книг</h2>
+
+<button id="addBtn" class="btn btn-primary">Добавить</button>
+
 <table id="books" class="display" style="width:100%">
     <thead>
         <tr>
@@ -11,37 +15,186 @@
             <th>NumberOfPages</th>
             <th>Publisher</th>
             <th>Year</th>
+            <th></th>
         </tr>
     </thead>
 </table>
+
+<hr />
+
+<h2 id="bookFormTitle">Добавить книгу</h2>
+
+<form id="bookForm">
+    <input type="hidden" id="id" />
+    <div class="form-group">
+        <label for="title">Заголовок</label>
+        <input type="text" class="form-control" id="title" placeholder="Введите заголовок...">
+    </div>
+    <div class="form-group">
+        <label for="numberOfPages">Количество страниц</label>
+        <input type="number" class="form-control" id="numberOfPages" placeholder="Введите количество страниц...">
+    </div>
+    <div class="form-group">
+        <label for="publisher">Название издательства</label>
+        <input type="text" class="form-control" id="publisher" placeholder="Введите издательство...">
+    </div>
+    <div class="form-group">
+        <label for="year">Год публикации</label>
+        <input type="number" class="form-control" id="year" placeholder="Введите год...">
+        <div class="invalid-feedback">
+            dfsdfs
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
 
 @section Scripts {
     @Scripts.Render("~/bundles/datatables")
     <script>
         $(function () {
             $.ajax({
-                type: "GET",
+                type: 'GET',
                 url: '/api/books',
                 dataType: 'json',
                 success: function (data) {
-                    $('#books').DataTable({
-                        data: data,
-                        stateSave: true,
-                        language: {
-                            url: "//cdn.datatables.net/plug-ins/1.10.19/i18n/Russian.json"
-                        },
-                        columns: [
-                            { data: "Title", title: "Наименование" },
-                            { data: "NumberOfPages", title: "Страниц" },
-                            { data: "Publisher", title: "Издательство"  },
-                            { data: "Year", title: "Год"  },
-                        ]
-                    });
+                    initTable(data);
                 },
                 error: function (data) {
-                    alert('Error! ' + data);
+                    alert('Ошибка! ' + data);
                 }
             });
         });
+
+        function initTable(data) {
+            var table =  $('#books').DataTable({
+                data: data,
+                stateSave: true,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.19/i18n/Russian.json'
+                },
+                columns: [
+                    { data: 'Title', title: 'Наименование' },
+                    { data: 'NumberOfPages', title: 'Страниц' },
+                    { data: 'Publisher', title: 'Издательство'  },
+                    { data: 'Year', title: 'Год' },
+                    {
+                        targets: -1, title: 'Действия',
+                        defaultContent: `
+                            <button class='btn btn-success btn-edit'>Изменить</button>
+                            <button class='btn btn-danger btn-delete'>Удалить</button>`
+                    }
+                ]
+            });
+
+            bindEvents(table);
+        }
+
+        function bindEvents(table) {
+            // Добвление.
+            $('#addBtn').click(function () {
+                $('#bookFormTitle').text('Добавить книгу');
+                clearFormData();
+            });
+
+            // Редактирование.
+            $('#books tbody').on('click', '.btn-edit', function () {
+                var data = table.row($(this).parents('tr')).data();
+                $('#bookFormTitle').text('Редактировать книгу');
+                setFormData(data);
+            });
+
+            // Удаление.
+            $('#books tbody').on('click', '.btn-delete', function () {
+                table.row($(this).parents('tr'))
+                    .remove()
+                    .draw();
+            });
+
+            // Сохранение.
+            $('#bookForm').submit(function(e) {
+                e.preventDefault();
+                save();
+            });
+        }
+
+        function setFormData(data) {
+            $('#id').val(data.Id);
+            $('#title').val(data.Title);
+            $('#numberOfPages').val(data.NumberOfPages);
+            $('#publisher').val(data.Publisher);
+            $('#year').val(data.Year);
+        }
+
+        function getFormData() {
+            return {
+                id: $('#id').val(),
+                title: $('#title').val(),
+                numberOfPages: $('#numberOfPages').val(),
+                publisher: $('#publisher').val(),
+                year: $('#year').val()
+            };
+        }
+
+        function clearFormData() {
+            $('#id').val('');
+            $('#title').val('');
+            $('#numberOfPages').val('');
+            $('#publisher').val('');
+            $('#year').val('');
+        }
+
+        function save() {
+            var data = getFormData();
+            if (data.id == 0) {
+                addBook(data);
+            } else {
+                editBook(data);
+            }
+        }
+
+        function addBook(data) {
+            alert('Add!!');
+        }
+
+        function editBook(data) {
+            var dataJson = JSON.stringify(data);
+            $.ajax({
+                type: 'PUT',
+                url: '/api/books/' + data.id,
+                contentType: 'application/json',
+                data: dataJson,
+                success: function (data) {
+                    alert('Запись успешно обновлена.');
+                },
+                error: function (data) {
+                    var response = data.responseJSON;
+                    if (response && response.ModelState) {
+                        setValidationErrors(response.ModelState);
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        function clearValidationErrors() {
+            $('#bookForm input').removeClass('is-invalid');
+            $('.invalid-feedback').html('');
+        }
+
+        function setValidationErrors(errors) {
+            clearValidationErrors();
+
+            $.each(errors, function (key, values) {
+                debugger
+                var keyParts = key.split('.');
+                var field = keyParts[keyParts.length - 1].toLowerCase();
+                var input = $('#' + field); 
+                input.addClass('is-invalid');
+                var errorsDiv = input.parent().find('.invalid-feedback');
+                values.forEach(function (value) {
+                    errorsDiv.append(value);
+                });
+            });
+        }
     </script>
 }
