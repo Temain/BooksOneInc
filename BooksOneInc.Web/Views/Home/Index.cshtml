@@ -155,7 +155,10 @@
         }
 
         function reloadBooks() {
+            unbindEvents();
+            table.clear();
             table.destroy();
+            table = null;
             loadBooks();
         }
 
@@ -163,11 +166,12 @@
 
         function bindEvents() {
             // Добвление книги.
-            $('#addBtn').unbind();
             $('#addBtn').click(function () {
                 $('#bookFormTitle').text('Добавить книгу');
                 clearFormData();
             });
+
+            $('#books tbody').off('click');
 
             // Редактирование книги.
             $('#books tbody').on('click', '.btn-edit', function () {
@@ -183,24 +187,30 @@
             });
 
             // Сохранение книги.
-            $('#bookForm').unbind();
             $('#bookForm').submit(function(e) {
                 e.preventDefault();
                 save();
             });
 
             // Добавление автора.
-            $('#addAuthorBtn').unbind();
             $('#addAuthorBtn').click(function () {
                 addAuthor();
             });
+        }
+
+        function unbindEvents() {
+            $('#addBtn').unbind();
+            $('#books tbody').off('click');
+            $('#bookForm').unbind();
+            $('#addAuthorBtn').unbind();
         }
 
         function bindAuthorEvents() {
             // Удаление автора.
             $('.btn-author-delete').unbind();
             $('.btn-author-delete').click(function () {
-                deleteAuthor();
+                var author = $(this).closest('.author');
+                deleteAuthor(author);
             });
         }
 
@@ -235,6 +245,7 @@
                 authorDiv.insertAfter('.author:last');
             }
             bindAuthorEvents();
+            clearValidationErrors();
         }
 
         function getFormData() {
@@ -274,10 +285,10 @@
             bindAuthorEvents();
         }
 
-        function deleteAuthor() {
+        function deleteAuthor(author) {
             var authors = $('.author');
             if (authors.length > 1) {
-                $(this).closest('.author').remove();
+                author.remove();
             }
         }
 
@@ -307,7 +318,6 @@
                     alert('Запись успешно добавлена.');
                 },
                 error: function (data) {
-                    debugger
                     var response = data.responseJSON;
                     if (response && response.ModelState) {
                         setValidationErrors(response.ModelState);
@@ -331,7 +341,6 @@
                     alert('Запись успешно обновлена.');
                 },
                 error: function (data) {
-                    debugger
                     var response = data.responseJSON;
                     if (response && response.ModelState) {
                         setValidationErrors(response.ModelState);
@@ -370,7 +379,6 @@
             clearValidationErrors();
 
             $.each(errors, function (key, values) {
-                debugger
                 var input;
                 var keyParts = key.split('.').slice(1);
                 if (key.includes('[') && keyParts.length > 1) {

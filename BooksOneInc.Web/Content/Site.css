@@ -15,3 +15,7 @@
 .dl-horizontal dt {
     white-space: normal;
 }
+
+ul {
+    padding: 12px;
+}
